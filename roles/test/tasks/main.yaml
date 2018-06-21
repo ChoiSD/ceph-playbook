@@ -1,0 +1,4 @@
+---
+
+- command: "echo {{ item }}"
+  with_sequence: count={{ ceph_osd | length }}

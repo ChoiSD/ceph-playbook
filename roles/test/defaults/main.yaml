@@ -1,0 +1,10 @@
+---
+# Variables in this file will be applied to across all nodes
+
+ntp_server: pool.ntp.org
+
+ceph_release: luminous
+ceph_cluster_name: ceph
+ceph_user: ceph
+ceph_user_home_directory: /var/lib/ceph
+ceph_group: ceph

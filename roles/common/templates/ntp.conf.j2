@@ -1,0 +1,10 @@
+driftfile /var/lib/ntp/ntp.drift
+
+{% if ntp_server is defined and ntp_server %}
+server {{ ntp_server }}
+{% else %}
+server 0.pool.ntp.org
+server 1.pool.ntp.org
+server 2.pool.ntp.org
+server 3.pool.ntp.org
+{% endif %}

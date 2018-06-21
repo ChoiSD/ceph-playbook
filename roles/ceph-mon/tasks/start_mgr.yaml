@@ -1,0 +1,13 @@
+---
+# Start ceph-mon process
+
+- name: Enable ceph-mgr.target services
+  service:
+    name: ceph-mgr.target
+    enabled: yes
+
+- name: Enable ceph-mgr services
+  service:
+    name: "ceph-mgr@{{ inventory_hostname }}"
+    enabled: yes
+    state: started

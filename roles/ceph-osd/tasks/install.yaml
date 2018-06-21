@@ -1,0 +1,14 @@
+---
+# Install ceph-mon utility
+
+- name: Install ceph-osd utility
+  yum:
+    name: ceph-osd
+    state: installed
+  when: ansible_distribution_file_variety == 'RedHat'
+
+- name: Install ceph-osd utility
+  apt:
+    name: ceph-osd
+    state: installed
+  when: ansible_distribution in ['Ubuntu', 'Debian']

@@ -1,0 +1,7 @@
+---
+# Deploy ceph-osd process
+
+- name: Deploy ceph-osd
+  hosts: osd
+  roles:
+  - ceph-osd

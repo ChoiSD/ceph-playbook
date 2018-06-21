@@ -1,0 +1,6 @@
+---
+# Cleanup all configured things from nodes
+
+- hosts: all
+  roles:
+  - cleanup

@@ -1,0 +1,59 @@
+---
+# Configure ceph-mon on first node
+
+- name: Generate fsid
+  command: uuidgen
+  register: fsid
+
+- name: Create Ceph configuration file
+  template:
+    src: ceph.conf.j2
+    dest: "/etc/ceph/{{ ceph_cluster_name }}.conf"
+    owner: "{{ ceph_user }}"
+    group: "{{ ceph_group }}"
+    mode: 0644
+
+- name: Copy Ceph configuration file to others
+  command: "scp /etc/ceph/{{ ceph_cluster_name }}.conf {{ item }}:/etc/ceph/"
+  when: inventory_hostname != item
+  with_items: "{{ groups['mon'] }}"
+
+- name: Create monitoring keyring
+  command: "ceph-authtool --create-keyring /tmp/{{ ceph_cluster_name }}.mon.keyring --gen-key -n mon. --cap mon 'allow *'"
+  args:
+    creates: "/tmp/{{ ceph_cluster_name }}.mon.keyring"
+
+- name: Copy monitoring keyring to others
+  command: "scp /tmp/{{ ceph_cluster_name }}.mon.keyring {{ item }}:/tmp/"
+  when: inventory_hostname != item
+  with_items: "{{ groups['mon'] }}"
+
+- name: Create client.admin keyring
+  command: "ceph-authtool --create-keyring /etc/ceph/{{ ceph_cluster_name }}.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow *'"
+  args:
+    creates: "/etc/ceph/{{ ceph_cluster_name }}.client.admin.keyring"
+
+- name: Create bootstarp-osd keyring
+  command: "ceph-authtool --create-keyring /var/lib/ceph/bootstrap-osd/{{ ceph_cluster_name }}.keyring --gen-key -n client.bootstrap-osd --cap mon 'profile bootstrap-osd'"
+  args:
+    creates: "/var/lib/ceph/bootstrap-osd/{{ ceph_cluster_name }}.keyring"
+
+- name: Copy bootstrap-osd keyring to others
+  command: "scp /var/lib/ceph/bootstrap-osd/{{ ceph_cluster_name }}.keyring {{ item }}:/var/lib/ceph/bootstrap-osd/"
+  when: inventory_hostname != item
+  with_items: "{{ groups['mon'] }}"
+
+- name: Integrate client.admin keyring into monitoring keyring
+  command: "ceph-authtool /tmp/{{ ceph_cluster_name }}.mon.keyring --import-keyring {{ item }}"
+  with_items:
+  - "/etc/ceph/{{ ceph_cluster_name }}.client.admin.keyring"
+  - "/var/lib/ceph/bootstrap-osd/{{ ceph_cluster_name }}.keyring"
+
+- name: Generate monitor map
+  command: "monmaptool --create {% for member in groups['mon'] %} --add {{ member }} {{ hostvars[member].ansible_host }}{% endfor %} --fsid {{ fsid.stdout }} /tmp/monmap"
+  become: "{{ ceph_user }}"
+
+- name: Copy monitor map to others
+  command: "scp /tmp/monmap {{ item }}:/tmp/"
+  when: inventory_hostname != item
+  with_items: "{{ groups['mon'] }}"

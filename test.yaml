@@ -1,0 +1,6 @@
+---
+# Prepare all nodes to install & configure Ceph
+
+- hosts: osd
+  roles:
+  - test

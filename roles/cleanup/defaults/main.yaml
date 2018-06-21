@@ -1,0 +1,6 @@
+---
+ceph_release: luminous
+ceph_cluster_name: ceph
+ceph_user: ceph
+ceph_user_home_directory: /var/lib/ceph
+ceph_group: ceph

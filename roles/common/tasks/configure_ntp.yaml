@@ -1,0 +1,24 @@
+---
+# Configure NTP
+
+- name: Install NTP
+  yum:
+    name: ntp
+    state: installed
+  when: ansible_distribution_file_variety == 'RedHat'
+
+- name: Install NTP
+  apt:
+    name: ntp
+    state: installed
+  when: ansible_distribution in ['Ubuntu', 'Debian']
+
+- name: Configure NTP
+  template:
+    src: ntp.conf.j2
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+  - restart ntpd

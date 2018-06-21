@@ -1,0 +1,19 @@
+---
+# Variables in this file will be applied to across all nodes
+
+#ntp_server: pool.ntp.org
+
+#ceph_release: 			# default = 'luminous'
+# luminous  - v12.2
+# jewel     - v10.2
+ceph_cluster_name: ceph_sdchoi 		# default = 'ceph'
+ceph_public_network: "192.168.250.0/24"
+ceph_cluster_network: "192.168.100.0/24"
+
+ceph_osd:
+- node: node1
+  device: "/dev/vdb"
+- node: node2
+  device: "/dev/vdb"
+- node: node3
+  device: "/dev/vdb"

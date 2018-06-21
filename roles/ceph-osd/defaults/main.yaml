@@ -1,0 +1,9 @@
+---
+ceph_release: luminous
+ceph_cluster_name: ceph
+ceph_user: ceph
+ceph_user_home_directory: /var/lib/ceph
+ceph_group: ceph
+
+# ceph-mon
+ceph_mon_port: 6789 # listening port

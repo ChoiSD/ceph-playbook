@@ -1,0 +1,27 @@
+---
+# Deploy ceph-mon & ceph-mgr process as defined
+
+- import_tasks: setup_repo.yaml
+  become: yes
+
+- import_tasks: passwordless_sudo.yaml
+  become: yes
+
+- import_tasks: install.yaml
+  become: yes
+
+- import_tasks: configure_mon_one.yaml
+  become: yes
+  when: inventory_hostname == groups['mon'][0]
+
+- import_tasks: configure_mon.yaml
+  become: yes
+
+- import_tasks: start_mon.yaml
+  become: yes
+
+- import_tasks: configure_mgr.yaml
+  become: yes
+
+- import_tasks: start_mgr.yaml
+  become: yes

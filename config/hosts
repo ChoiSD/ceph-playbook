@@ -1,0 +1,15 @@
+# IP address  short_name  long_name
+[mon]
+node1	ansible_host=192.168.100.11	short_name=node1	long_name=node1.sdchoi.local
+node2	ansible_host=192.168.100.12	short_name=node2	long_name=node2.sdchoi.local
+node3	ansible_host=192.168.100.13	short_name=node3	long_name=node3.sdchoi.local
+
+[osd]
+node1	ansible_host=192.168.100.11	short_name=node1	long_name=node1.sdchoi.local
+node2	ansible_host=192.168.100.12	short_name=node2	long_name=node2.sdchoi.local
+node3	ansible_host=192.168.100.13	short_name=node3	long_name=node3.sdchoi.local
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=centos
+#ansible_ssh_pass=centos

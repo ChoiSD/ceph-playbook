@@ -1,0 +1,7 @@
+---
+# Deploy ceph-mon process
+
+- name: Deploy ceph-mon & ceph-mgr
+  hosts: mon
+  roles:
+  - ceph-mon

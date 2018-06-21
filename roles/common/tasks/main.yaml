@@ -1,0 +1,11 @@
+---
+# Prepare all nodes in cluster
+
+- import_tasks: configure_ntp.yaml
+  become: yes
+
+- import_tasks: configure_hostname.yaml
+  become: yes
+
+- import_tasks: configure_passwordless_ssh.yaml
+  become: yes

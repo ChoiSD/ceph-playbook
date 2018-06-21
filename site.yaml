@@ -1,0 +1,7 @@
+---
+
+- import_playbook: prepare.yaml
+
+- import_playbook: deploy_ceph-mon.yaml
+
+- import_playbook: deploy_ceph-osd.yaml

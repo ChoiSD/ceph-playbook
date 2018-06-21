@@ -1,0 +1,27 @@
+---
+# Configure ceph-mgr
+
+- name: Create data directory for ceph-mgr
+  file:
+    path: "/var/lib/ceph/mgr/{{ ceph_cluster_name }}-{{ inventory_hostname }}"
+    state: directory
+    mode: 0755
+
+- name: Create authenticatio key for ceph-mgr
+  command: "ceph --cluster {{ ceph_cluster_name }} auth get-or-create mgr.{{ inventory_hostname }} mon 'allow profile mgr' osd 'allow *' mds 'allow *' -o /tmp/{{ inventory_hostname }}.keyring"
+  args:
+    creates: "/tmp/{{ inventory_hostname }}.keyring"
+  delegate_to: "{{ groups['mon'][0] }}"
+
+- name: Copy ceph-mgr keyring
+  command: "scp /tmp/{{ inventory_hostname }}.keyring {{ short_name }}:/var/lib/ceph/mgr/{{ ceph_cluster_name }}-{{ inventory_hostname }}/keyring"
+  delegate_to: "{{ groups['mon'][0] }}"
+
+- name: Delete temporary keyring files
+  file:
+    path: "/tmp/{{ inventory_hostname }}.keyring"
+    state: absent
+  delegate_to: "{{ groups['mon'][0] }}"
+
+- name: Update owner & group permissions for files
+  command: "chown {{ ceph_user }}:{{ ceph_group }} -R /var/lib/ceph/mgr"

@@ -1,0 +1,15 @@
+---
+# Deploy ceph-osd process
+
+- import_tasks: setup_repo.yaml
+  become: yes
+
+- import_tasks: passwordless_sudo.yaml
+  become: yes
+
+- import_tasks: install.yaml
+  become: yes
+
+- import_tasks: configure_osd.yaml
+  become: yes
+  

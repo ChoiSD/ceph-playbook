@@ -1,0 +1,7 @@
+---
+# Prepare all nodes to install & configure Ceph
+
+- name: Prepare all nodes to install & configure ceph
+  hosts: all
+  roles:
+  - common

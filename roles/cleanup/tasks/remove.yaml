@@ -1,0 +1,75 @@
+---
+# Remove ceph-mon & ceph-mgr
+
+- name: Uninstall ceph
+  yum:
+    name: "{{ item }}"
+    state: absent
+  when: ansible_distribution_file_variety == 'RedHat'
+  with_items:
+  - "python-cephfs"
+  - "ceph-common"
+  - "ceph-selinux"
+  - "ceph-mon"
+  - "libcephfs2"
+  - "ceph-base"
+  - "ceph-mgr"
+  - "ceph-osd"
+  - "epel-release"
+
+- name: Uninstall ceph
+  apt:
+    name: "{{ item }}"
+    state: absent
+  when: ansible_distribution in ['Ubuntu', 'Debian']
+  with_items:
+  - "python-cephfs"
+  - "ceph-common"
+  - "ceph-selinux"
+  - "ceph-mon"
+  - "libcephfs2"
+  - "ceph-base"
+  - "ceph-mgr"
+  - "ceph-osd"
+
+- name: Remove ceph's configuration files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+  - "/var/lib/ceph"
+  - "/var/log/ceph"
+  - "/etc/ceph"
+  - "/etc/sysconfig/ceph"
+  - "/tmp/monmap"
+  - "/tmp/{{ ceph_cluster_name }}.mon.keyring"
+  - "/etc/sudoers.d/10-{{ ceph_user }}"
+
+- name: Remove ceph user
+  user:
+    name: "{{ ceph_user }}"
+    group: "{{ ceph_group }}"
+    state: absent
+
+- name: Remove ceph group
+  group:
+    name: "{{ ceph_group }}"
+    state: absent
+
+- name: Remove Ceph repository
+  file:
+    path: /etc/yum.repos.d/ceph.repo
+    state: absent
+  when: ansible_distribution_file_variety == 'RedHat'
+
+- name: Remove SSH keys
+  file:
+    path: /root/.ssh
+    state: absent
+
+- name: Remove hostnames
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ item }}"
+    state: absent
+  with_items: "{{ groups['all'] }}"

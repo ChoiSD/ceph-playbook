@@ -1,0 +1,10 @@
+---
+# Clean up everything that I've made through this playbook
+
+- import_tasks: stop.yaml
+  become: yes
+  ignore_errors: yes
+
+- import_tasks: remove.yaml
+  become: yes
+  ignore_errors: yes

@@ -1,0 +1,20 @@
+---
+# Install ceph-mon utility
+
+- name: Install ceph-mon & ceph-mgr utility
+  yum:
+    name: "{{ item }}"
+    state: installed
+  when: ansible_distribution_file_variety == 'RedHat'
+  with_items:
+  - "ceph-mon"
+  - "ceph-mgr"
+
+- name: Install ceph-mon & ceph-mgr utility
+  apt:
+    name: "{{ item }}"
+    state: installed
+  when: ansible_distribution in ['Ubuntu', 'Debian']
+  with_items:
+  - "ceph-mon"
+  - "ceph-mgr"

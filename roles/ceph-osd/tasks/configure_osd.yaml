@@ -1,0 +1,32 @@
+---
+# Configure ceph-osd
+
+- name: Copy Ceph configuration file
+  command: "scp /etc/ceph/{{ ceph_cluster_name }}.conf {{ short_name }}:/etc/ceph/"
+  args:
+    creates: "/etc/ceph/{{ ceph_cluster_name }}.conf"
+  delegate_to: "{{ groups['mon'][0] }}"
+
+- name: Copy bootstarp-osd keyring to osd nodes
+  command: "scp /var/lib/ceph/bootstrap-osd/{{ ceph_cluster_name }}.keyring {{ short_name }}:/var/lib/ceph/bootstrap-osd/"
+  args:
+    creates: "/var/lib/ceph/bootstrap-osd/{{ ceph_cluster_name }}.keyring"
+  delegate_to: "{{ groups['mon'][0] }}"
+
+- name: Update owner & group permissions for files
+  command: "chown {{ ceph_user }}:{{ ceph_group }} {{ item }}"
+  with_items:
+  - "-R /var/lib/ceph/osd"
+  - "/etc/ceph/{{ ceph_cluster_name }}.conf"
+
+- name: Edit default cluster name
+  lineinfile:
+    dest: /etc/sysconfig/ceph
+    regexp: '^CLUSTER'
+    line: 'CLUSTER={{ ceph_cluster_name }}'
+    state: present
+
+- name: Create & Activate OSD (Bluestore)
+  shell: "ceph-volume --cluster {{ ceph_cluster_name }} lvm create --data {{ item.device }}"
+  when: inventory_hostname == item.node
+  with_items: "{{ ceph_osd }}"

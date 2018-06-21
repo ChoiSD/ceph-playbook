@@ -1,0 +1,32 @@
+---
+# Stop ceph-mon, ceph-mgr & ceph-osd process
+
+- name: Disable ceph-osd services
+  service:
+    name: "ceph-osd.target"
+    enabled: no
+    state: stopped
+  when: inventory_hostname == item.node
+  with_items: "{{ ceph_osd }}"
+
+- name: Remove OSDs
+  command: "ceph --cluster {{ ceph_cluster_name }} osd purge {{ item }} --yes-i-really-mean-it"
+  when: inventory_hostname == groups['mon'][0]
+  with_sequence: count={{ ceph_osd | length }}
+
+- name: Disable ceph-mon & ceph-mgr services
+  service:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+  with_items:
+  - "ceph-mon@{{ inventory_hostname }}"
+  - "ceph-mgr@{{ inventory_hostname }}"
+
+- name: Disable ceph-mon & ceph-mgr target services
+  service:
+    name: "{{ item }}"
+    enabled: no
+  with_items:
+  - "ceph-mon.target"
+  - "ceph-mgr.target"
