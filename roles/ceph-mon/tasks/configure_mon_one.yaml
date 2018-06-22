@@ -29,7 +29,7 @@
   with_items: "{{ groups['mon'] }}"
 
 - name: Create client.admin keyring
-  command: "ceph-authtool --create-keyring /etc/ceph/{{ ceph_cluster_name }}.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow *'"
+  command: "ceph-authtool --create-keyring /etc/ceph/{{ ceph_cluster_name }}.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow *' --cap mgr 'allow *'"
   args:
     creates: "/etc/ceph/{{ ceph_cluster_name }}.client.admin.keyring"
 

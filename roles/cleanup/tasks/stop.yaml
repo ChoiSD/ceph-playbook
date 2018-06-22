@@ -30,3 +30,20 @@
   with_items:
   - "ceph-mon.target"
   - "ceph-mgr.target"
+
+- name: Get mounted OSD devices
+  command: ls /var/lib/ceph/osd/
+  register: osd_list
+
+- name: Unmount OSD devices
+  command: "umount /var/lib/ceph/osd/{{ item }}"
+  with_items: "{{ osd_list.stdout_lines }}"
+
+- name: Get ceph VG list
+  shell: "vgs --noheadings -o vg_name | xargs"
+  register: vg_list
+
+- name: Remove ceph VG
+  command: "vgremove -f {{ item }} -q"
+  when: item.startswith('ceph')
+  with_items: "{{ vg_list.stdout_lines }}"
